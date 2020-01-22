@@ -1,0 +1,47 @@
+<% unless current_user.present? %>
+  <%= link_to "Log in", new_user_session_path %>
+  <%= link_to "Sign up", new_user_registration_path %>
+<% else %>
+  <%= link_to "Sign out", destroy_user_session_path, method: :delete %>
+<% end %>
+
+<h2> Tv Shows </h2>
+<table id="tv_shows_listing" class="display">
+  <thead>
+    <tr>
+      <th>Channel name</th>
+      <th>Shows</th>
+      <th>Show Timing</th>
+      <th>Mark as favorite</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @tv_shows.each do |tv_show| %>
+      <tr>
+        <td><%= tv_show.channel.name %></td>
+        <td><%= tv_show.name %></td>
+        <td><%= tv_show.show_timing.strftime("%I:%M %p") %></td>
+        <td>
+          <% if current_user.present? %>
+            <% if current_user.favorited?(tv_show) %>
+              <%= link_to "Mark As UnFavourite", unsubscribe_tv_show_tv_shows_path(show_id: tv_show.id),method: :post, 'data-id': tv_show.id %>
+            <% else %>
+              <%= link_to "Mark As Favourite", subscribe_tv_show_tv_shows_path(show_id: tv_show.id),method: :post, 'data-id': tv_show.id %>
+            <% end %>
+          <% else %>
+            <%= link_to "Mark As Favourite", new_user_session_path %>
+          <% end %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css">
+<script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
+<script>
+  $(document).ready(function() {
+    $('#tv_shows_listing').DataTable();
+  });
+</script>
